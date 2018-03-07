@@ -41,6 +41,13 @@
     return formattedData;
 }
 
++(uint16_t)readFormattedDataLength:(NSData *)formattedData{
+    
+    uint16_t length=[ConvertDataTool readFormattedDataHead:formattedData];
+    
+    return length;
+}
+
 +(uint16_t)readFormattedDataHead:(NSData *)formattedData{
     
     //read first 2 bytes.it is the whole formattedData length.

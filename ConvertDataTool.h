@@ -32,6 +32,13 @@
  */
 +(NSData *)formatTCPData:(NSData *)rawData;
 
-+(uint16_t)readFormattedDataHead:(NSData *)formattedData;
+
+/**
+ read formatted data length(bytes)
+
+ @param formattedData formatted data
+ @return length of bytes
+ */
++(uint16_t)readFormattedDataLength:(NSData *)formattedData;
 
 @end
