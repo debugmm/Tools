@@ -1,15 +1,11 @@
 //
-//  MTFMDBManager.h
+//  FMDBManager.h
 //
 //  Created by worktree on 09/03/2018.
 //  Copyright © 2018 wjg. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-
-@class MTUserEntity;
-@class MTDevice;
-@class MTRelationEntity;
 
 #pragma mark -
 @interface MTFMDBManager : NSObject
