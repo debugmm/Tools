@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 
 #pragma mark -
-@interface MTFMDBManager : NSObject
+@interface FMDBManager : NSObject
 
 +(instancetype)sharedManager;
 
