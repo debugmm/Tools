@@ -48,7 +48,7 @@
     return length;
 }
 
-+(uint16_t)readFormattedDataHead:(NSData *)formattedData{
++(uint16_t)readFormattedDataHeadData:(NSData *)formattedData{
     
     //read first 2 bytes.it is the whole formattedData length.
     uint16_t val0=0;
@@ -56,9 +56,43 @@
     [formattedData getBytes:&val0 range:NSMakeRange(0, 1)];
     [formattedData getBytes:&val1 range:NSMakeRange(1, 1)];
     
-    uint16_t dstVal=(val0 & 0xff) + ((val1 << 8) & 0xff00);
+    uint16_t dstVal=(uint16_t)((val0 & 0xff) | ((val1 & 0xff) << 8));
     
     return dstVal;
+}
+
+#pragma mark - convert date
++(nonnull NSString *)convertDateToYMDString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
+}
+
++(nonnull NSString *)convertDateToYMDHMSString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
+}
+
++(nonnull NSString *)convertDateToFullString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
 }
 
 @end
