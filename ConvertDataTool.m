@@ -50,13 +50,11 @@
 
 +(uint16_t)readFormattedDataHeadData:(NSData *)formattedData{
     
-    //read first 2 bytes.it is the whole formattedData length.
-    uint16_t val0=0;
-    uint16_t val1=0;
-    [formattedData getBytes:&val0 range:NSMakeRange(0, 1)];
-    [formattedData getBytes:&val1 range:NSMakeRange(1, 1)];
+    char valChar[TCPFormattedDataLength];
     
-    uint16_t dstVal=(uint16_t)((val0 & 0xff) | ((val1 & 0xff) << 8));
+    [formattedData getBytes:valChar range:NSMakeRange(TCPFormattedDataHeadThirdByte, TCPFormattedDataLength)];
+    
+    uint16_t dstVal=(uint16_t)(((valChar[1] & 0xff) << 8) | ((valChar[0] & 0xff) << 0));
     
     return dstVal;
 }
