@@ -1,11 +1,11 @@
 //
-//  MTFMDBManager.m
+//  FMDBManager.m
 //
 //  Created by worktree on 09/03/2018.
 //  Copyright © 2018 wjg. All rights reserved.
 //
 
-#import "MTFMDBManager.h"
+#import "FMDBManager.h"
 
 //fmdb
 #import <FMDB.h>
