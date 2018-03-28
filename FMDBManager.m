@@ -17,7 +17,7 @@
 
 
 //define
-static MTFMDBManager *sharedManager=nil;
+static FMDBManager *sharedManager=nil;
 #define DBName (@"mt.db")
 #define DBFolderName (@"db")
 
@@ -41,14 +41,14 @@ static MTFMDBManager *sharedManager=nil;
 #define UidKey (@"uid")//key:value<string>,the value is user id
 
 #pragma mark -
-@interface MTFMDBManager(){
+@interface FMDBManager(){
     
     FMDatabaseQueue *dbQueue;//fmdb queue
 }
 
 @end
 
-@implementation MTFMDBManager
+@implementation FMDBManager
 
 +(instancetype)sharedManager{
     
@@ -56,7 +56,7 @@ static MTFMDBManager *sharedManager=nil;
     
     dispatch_once(&one, ^{
         
-        sharedManager=[[MTFMDBManager alloc] init];
+        sharedManager=[[FMDBManager alloc] init];
     });
     
     return sharedManager;
