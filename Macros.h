@@ -25,3 +25,6 @@
 //Status Bar height-width
 #define StatusBarHeight ([UIApplication sharedApplication].statusBarFrame.size.height)
 #define StatusBarWidth ([UIApplication sharedApplication].statusBarFrame.size.width)
+
+//define FileSize
+typedef unsigned long long AliasFileSize;
