@@ -310,28 +310,28 @@ static DeviceAuthManager *shareManager=nil;
 }
 
 #pragma mark - convert FileSize to TB-GB-MB-KB
-+(nullable NSString *)convertLongFileSizeValueToTGMBString:(MTFileSize)fileSize{
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(AliasFileSize)fileSize{
     
     NSString *xB=@"";
     
     if(fileSize<MB && fileSize>0){
         //convert To KB
-        MTFileSize kbb=fileSize/KB;
+        AliasFileSize kbb=fileSize/KB;
         xB=[NSString stringWithFormat:@"%lluKB",kbb];
     }
     else if(fileSize>MB && fileSize<GB){
         //convert To MB
-        MTFileSize kbb=fileSize/MB;
+        AliasFileSize kbb=fileSize/MB;
         xB=[NSString stringWithFormat:@"%lluMB",kbb];
     }
     else if(fileSize>GB && fileSize<TB){
         //convert To GB
-        MTFileSize kbb=fileSize/GB;
+        AliasFileSize kbb=fileSize/GB;
         xB=[NSString stringWithFormat:@"%lluGB",kbb];
     }
     else if(fileSize>TB){
         //convert To TB
-        MTFileSize kbb=fileSize/TB;
+        AliasFileSize kbb=fileSize/TB;
         xB=[NSString stringWithFormat:@"%lluTB",kbb];
     }
     
