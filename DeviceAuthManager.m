@@ -23,6 +23,12 @@
 #define PrivacyPS (@"root=Privacy")
 #define PhotoPS (@"root=Photos")
 
+//about file size
+#define KB (1024ul)
+#define MB (((KB) * (KB)))
+#define GB (((MB) * (KB)))
+#define TB (((GB) * (KB)))
+
 static DeviceAuthManager *shareManager=nil;
 
 #pragma mark -
@@ -301,6 +307,35 @@ static DeviceAuthManager *shareManager=nil;
     UIGraphicsEndImageContext();
     
     return image;
+}
+
+#pragma mark - convert FileSize to TB-GB-MB-KB
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(MTFileSize)fileSize{
+    
+    NSString *xB=@"";
+    
+    if(fileSize<MB && fileSize>0){
+        //convert To KB
+        MTFileSize kbb=fileSize/KB;
+        xB=[NSString stringWithFormat:@"%lluKB",kbb];
+    }
+    else if(fileSize>MB && fileSize<GB){
+        //convert To MB
+        MTFileSize kbb=fileSize/MB;
+        xB=[NSString stringWithFormat:@"%lluMB",kbb];
+    }
+    else if(fileSize>GB && fileSize<TB){
+        //convert To GB
+        MTFileSize kbb=fileSize/GB;
+        xB=[NSString stringWithFormat:@"%lluGB",kbb];
+    }
+    else if(fileSize>TB){
+        //convert To TB
+        MTFileSize kbb=fileSize/TB;
+        xB=[NSString stringWithFormat:@"%lluTB",kbb];
+    }
+    
+    return xB;
 }
 
 #pragma mark - Property
