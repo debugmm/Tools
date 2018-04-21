@@ -734,6 +734,46 @@ static unsigned long long basicRandomInt=0;
     return image;
 }
 
+#pragma mark -
++(nullable UIImage *)addImageToImageCenter:(nonnull NSString *)imageNameA
+                             withImageName:(nonnull NSString *)imageNameB{
+    
+    UIImage *image=[ToolManager addImageToImageCenter:imageNameA withImageName:imageNameB delat:0];
+    
+    return image;
+}
+
++(nullable UIImage *)addImageToImageCenter:(nonnull NSString *)imageNameA
+                             withImageName:(nonnull NSString *)imageNameB
+                                     delat:(CGFloat)delat{
+    //add imageB into imageA.
+    //imageA.size >= imageB.size
+    
+    UIImage *imageA=[UIImage imageNamed:imageNameA];
+    UIImage *imageB=[UIImage imageNamed:imageNameB];
+    
+    CGSize sA=imageA.size;
+    CGSize sB=imageB.size;
+    
+    CGFloat scale=[UIScreen mainScreen].scale;
+    
+    //we asume that sA > sB.
+    CGFloat x=(sA.width-sB.width-delat)/2.0;
+    CGFloat y=(sA.height-sB.height-delat)/2.0;
+    
+    UIGraphicsBeginImageContext(CGSizeMake(sA.width*scale, sA.height*scale));
+    CGContextScaleCTM(UIGraphicsGetCurrentContext(), scale, scale);
+    
+    [imageA drawInRect:CGRectMake(0, 0, sA.width, sA.height)];
+    [imageB drawInRect:CGRectMake(x, y, sB.width+delat, sB.height+delat)];
+    
+    UIImage *resultImage=UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return [UIImage imageWithCGImage:resultImage.CGImage scale:scale orientation:UIImageOrientationUp];
+}
+
 #pragma mark - Property
 -(UIViewController *)presentViewController{
     
