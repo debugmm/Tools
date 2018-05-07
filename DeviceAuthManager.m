@@ -274,6 +274,50 @@ static DeviceAuthManager *shareManager=nil;
     return canUse;
 }
 
+#pragma mark - action sheet
++(nonnull UIAlertController*)alertCameraPhotoAlbumActionSheetWithCurrentViewController:(nonnull UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate> *)currentViewController{
+    
+    //config image picker
+    UIImagePickerController *imagePicker=[[UIImagePickerController alloc] init];
+    imagePicker.delegate=currentViewController;
+    imagePicker.allowsEditing=YES;
+    
+    //config action sheet
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"选片图片" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    __weak typeof(alert) weakAlert=alert;
+    __weak typeof(currentViewController) weakCurController=currentViewController;
+    
+    UIAlertAction *cameraAction=[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        imagePicker.cameraDevice=UIImagePickerControllerCameraDeviceFront;
+
+        [weakCurController presentViewController:imagePicker animated:YES completion:nil];
+    }];
+    
+    UIAlertAction *photoAlbumAction=[UIAlertAction actionWithTitle:@"从相册选取" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        [weakCurController presentViewController:imagePicker animated:YES completion:nil];
+    }];
+    
+    UIAlertAction *cancelAction=[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [weakAlert dismissViewControllerAnimated:YES completion:nil];
+    }];
+    
+    [alert addAction:cameraAction];
+    [alert addAction:photoAlbumAction];
+    [alert addAction:cancelAction];
+    
+    //show alert
+    [currentViewController presentViewController:alert animated:YES completion:nil];
+    
+    return alert;
+}
+
 #pragma mark - UIAlertView Delegate
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     
