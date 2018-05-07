@@ -13,8 +13,6 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import <UIKit/UIKit.h>
-
 //define
 #define AlertCancelBtnIndex (0)
 #define AlertSureBtnIndex (1)
@@ -62,7 +60,7 @@ static DeviceAuthManager *shareManager=nil;
     
     if([UIDevice currentDevice].systemVersion.floatValue<8.0){
         
-        NSString *s=[NSString stringWithFormat:@"%@:%@",PrefsScheme,PrivacyPS];
+        NSString *s=[NSString stringWithFormat:@"%@:root=%@",@"prefs",AppBundleId];//@"%@:%@",PrefsScheme,PrivacyPS];
         url=[NSURL URLWithString:s];
     }
     else{
@@ -79,7 +77,7 @@ static DeviceAuthManager *shareManager=nil;
     
     if([UIDevice currentDevice].systemVersion.floatValue<8.0){
     
-        NSString *s=[NSString stringWithFormat:@"%@:%@",PrefsScheme,PhotoPS];
+        NSString *s=[NSString stringWithFormat:@"%@:root=%@",@"prefs",AppBundleId];//@"%@:%@",PrefsScheme,PhotoPS];
 
         url=[NSURL URLWithString:s];
     }
