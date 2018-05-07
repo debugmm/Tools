@@ -435,6 +435,32 @@ static DeviceAuthManager *shareManager=nil;
     return resultImage;
 }
 
++(UIImage *)compressImage:(UIImage *)image toSize:(CGSize)size{
+    
+    UIImage *midImage=[image copy];
+    
+    UIGraphicsBeginImageContext(size);
+    
+    [midImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
++(NSData *)convertImageToData:(nonnull UIImage *)image{
+    
+    NSData *data;
+    if(image &&
+       [image isKindOfClass:[UIImage class]]){
+        
+        data=UIImageJPEGRepresentation(image, 1.0);
+    }
+    
+    return data;
+}
+
 #pragma mark - Property
 -(UIViewController *)presentViewController{
     
