@@ -27,7 +27,10 @@
 #define GB (((MB) * (KB)))
 #define TB (((GB) * (KB)))
 
+#define Nanoseconds (1000000000)
+
 static DeviceAuthManager *shareManager=nil;
+static unsigned long long basicRandomInt=0;
 
 #pragma mark -
 @interface DeviceAuthManager()<UIAlertViewDelegate>
@@ -48,9 +51,21 @@ static DeviceAuthManager *shareManager=nil;
     dispatch_once(&one, ^{
         
         shareManager=[[DeviceAuthManager alloc] init];
+        
+        basicRandomInt = (unsigned long long)([NSDate date].timeIntervalSinceReferenceDate * (Nanoseconds));
     });
     
     return shareManager;
+}
+
+#pragma mark - Generate random int
++(unsigned long long)generateSteppedIntFromDate{
+    
+    unsigned long long endInt = (unsigned long long)([NSDate date].timeIntervalSinceReferenceDate * (Nanoseconds));
+    
+    unsigned long long steppedInt=endInt-basicRandomInt;
+    
+    return steppedInt;
 }
 
 #pragma mark - Jump to sys-app Setting
