@@ -53,12 +53,18 @@
 
 -(void)initConfig{
     
-    [self removeNavigationBackItemDefaultTitle];
 }
 
 -(void)removeNavigationBackItemDefaultTitle{
     
     [self.navigationItem setBackBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"" style:self.navigationItem.backBarButtonItem.style target:nil action:nil]];
+}
+
+-(void)hiddenDefaultBackButton{
+    
+    self.navigationItem.leftBarButtonItem=nil;
+    self.navigationItem.leftBarButtonItems=nil;
+    [self.navigationItem setHidesBackButton:YES];
 }
 
 #pragma mark - Public

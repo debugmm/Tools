@@ -117,15 +117,16 @@ static FMDBManager *sharedManager=nil;
 
 #pragma mark - about user default
 -(NSString *)getAutoLoginUserUId{
+    
     //for auto login
     NSUserDefaults *u=[NSUserDefaults standardUserDefaults];
     
-    NSDictionary *dict=[u objectForKey:DictionaryKey];
+    NSDictionary *motouDict=[u objectForKey:MotouDictionaryKey];
     NSString *uid=@"";
     
-    if(dict){
+    if(motouDict){
         
-        uid=[motouDict objectForKey:UidKey];
+        uid=[motouDict objectForKey:MotouUidKey];
     }
     
     return uid;
@@ -135,9 +136,26 @@ static FMDBManager *sharedManager=nil;
     //for auto login
     NSUserDefaults *u=[NSUserDefaults standardUserDefaults];
     
-    NSDictionary *dict=@{UidKey:uid};
+    NSDictionary *cachedDict=[u objectForKey:MotouDictionaryKey];
+    NSMutableDictionary *motouDict=[NSMutableDictionary dictionaryWithCapacity:1];
+    if(cachedDict){
+        [motouDict addEntriesFromDictionary:cachedDict];
+    }
     
-    [u setObject:dict forKey:DictionaryKey];
+    [motouDict setObject:uid forKey:MotouUidKey];
+    
+    [u setObject:motouDict forKey:MotouDictionaryKey];
+    
+    BOOL res=[u synchronize];
+    
+    NSLog(@"saveUIdToPlist result:%d",res);
+}
+
+-(void)clearPlist{
+    
+    NSUserDefaults *u=[NSUserDefaults standardUserDefaults];
+    
+    [u removeObjectForKey:MotouDictionaryKey];
     
     [u synchronize];
 }

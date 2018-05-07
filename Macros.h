@@ -28,3 +28,11 @@
 
 //define FileSize
 typedef unsigned long long AliasFileSize;
+
+//about file size
+#define KB (1024ul)
+#define MB (((KB) * (KB)))
+#define GB (((MB) * (KB)))
+#define TB (((GB) * (KB)))
+
+#define Nanoseconds (1000000000)

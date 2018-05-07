@@ -13,20 +13,13 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import <UIKit/UIKit.h>
-
 #import "MTAppConst.h"
 #import "NSString+CateString.h"
+#import <AFNetworking.h>
 
 //define
 #define AlertCancelBtnIndex (0)
 #define AlertSureBtnIndex (1)
-
-#define PrefsScheme (@"motouappprivateSettingScheme")
-#define PrivacyPS (@"root=Privacy")
-#define PhotoPS (@"root=Photos")
-
-#define Nanoseconds (1000000000)
 
 static ToolManager *shareManager=nil;
 static unsigned long long basicRandomInt=0;
@@ -67,6 +60,126 @@ static unsigned long long basicRandomInt=0;
     return steppedInt;
 }
 
+#pragma mark - action sheet
++(nonnull UIAlertController*)alertCameraPhotoAlbumActionSheetWithCurrentViewController:(nonnull UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate> *)currentViewController{
+    
+    //config image picker
+    UIImagePickerController *imagePicker=[[UIImagePickerController alloc] init];
+    imagePicker.delegate=currentViewController;
+    imagePicker.allowsEditing=YES;
+    
+    //config action sheet
+    UIAlertController *alert=[UIAlertController alertControllerWithTitle:@"选片图片" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    __weak typeof(alert) weakAlert=alert;
+    __weak typeof(currentViewController) weakCurController=currentViewController;
+    
+    UIAlertAction *cameraAction=[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        imagePicker.cameraDevice=UIImagePickerControllerCameraDeviceFront;
+        
+        [weakCurController presentViewController:imagePicker animated:YES completion:nil];
+    }];
+    
+    UIAlertAction *photoAlbumAction=[UIAlertAction actionWithTitle:@"从相册选取" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        [weakCurController presentViewController:imagePicker animated:YES completion:nil];
+    }];
+    
+    UIAlertAction *cancelAction=[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [weakAlert dismissViewControllerAnimated:YES completion:nil];
+    }];
+    
+    [alert addAction:cameraAction];
+    [alert addAction:photoAlbumAction];
+    [alert addAction:cancelAction];
+    
+    //show alert
+    [currentViewController presentViewController:alert animated:YES completion:nil];
+    
+    return alert;
+}
+
+#pragma mark - Alert An Prompt
+-(void)alertPromptView:(nonnull NSString *)title
+               message:(nullable NSString *)message
+ currentViewController:(nonnull UIViewController *)currentViewController
+           cancelBlock:(AlertCancelBlock _Nullable)cancelBlock
+               okBlock:(AlertOkBlock _Nullable)okBlock{
+    
+    NSString *okTitle=NSLocalizedString(@"alertPage_okButton_title", nil);
+    NSString *cancelTitle=NSLocalizedString(@"alertPage_cancelButton_title", nil);
+    
+    [self alertPromptView:title
+                  message:message
+              cancelTitle:cancelTitle
+                  okTitle:okTitle
+    currentViewController:currentViewController
+              cancelBlock:cancelBlock okBlock:okBlock];
+}
+
+-(void)alertPromptView:(nonnull NSString *)title
+               message:(nullable NSString *)message
+           cancelTitle:(nonnull NSString *)cancelTitle
+               okTitle:(nonnull NSString *)okTitle
+ currentViewController:(nonnull UIViewController *)currentViewController
+           cancelBlock:(AlertCancelBlock _Nullable)cancelBlock
+               okBlock:(AlertOkBlock _Nullable)okBlock{
+    
+    //set block
+    self.okBlock=okBlock;
+    self.cancelBlock=cancelBlock;
+    
+    if([UIDevice currentDevice].systemVersion.floatValue <= 8.0){
+        //use UIAlertView
+        UIAlertView *alerView=[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelTitle otherButtonTitles:okTitle, nil];
+        
+        alerView.delegate=self;
+        alerView.alertViewStyle=UIAlertViewStyleDefault;
+        
+        [alerView show];
+    }
+    else{
+        //use UIAlertController
+        UIAlertController *alert=[UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+        
+        //ok btn
+        UIAlertAction *okAction=[UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            UITextField *oldpwd = (UITextField *)[alert.textFields firstObject];
+            UITextField *newpwd=(UITextField *)[alert.textFields lastObject];
+            
+            NSString *oldp=oldpwd.text;
+            NSString *newp=newpwd.text;
+            
+            if([NSString isEmptyString:oldp] ||
+               [NSString isEmptyString:newp]){
+                return;
+            }
+            
+            NSDictionary *pd=@{OldPasswordKey:oldp,
+                               NewPasswordKey:newp
+                               };
+            self.okBlock(pd);
+        }];
+        
+        //cancel btn
+        UIAlertAction *cancelAction=[UIAlertAction actionWithTitle:cancelTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            
+            self.cancelBlock(nil);
+        }];
+        
+        [alert addAction:okAction];
+        [alert addAction:cancelAction];
+        
+        [currentViewController presentViewController:alert animated:YES completion:nil];
+    }
+}
+
 #pragma mark - Alert Password Change
 -(void)alertChangePassword:(nonnull NSString *)title
                    message:(nullable NSString *)message
@@ -103,7 +216,7 @@ static unsigned long long basicRandomInt=0;
         UIAlertView *alerView=[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelTitle otherButtonTitles:okTitle, nil];
         
         alerView.alertViewStyle=UIAlertViewStyleLoginAndPasswordInput;
-        
+        alerView.delegate=self;
         //old password
         UITextField *tflogin=[alerView textFieldAtIndex:0];
         tflogin.placeholder=NSLocalizedString(@"alertPage_oldPasswordTextfield_placeholder_text", nil);
@@ -204,7 +317,7 @@ static unsigned long long basicRandomInt=0;
         UIAlertView *alerView=[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelTitle otherButtonTitles:okTitle, nil];
         
         alerView.alertViewStyle=UIAlertViewStylePlainTextInput;
-        
+        alerView.delegate=self;
         [alerView show];
     }
     else{
@@ -256,7 +369,7 @@ static unsigned long long basicRandomInt=0;
     if([UIDevice currentDevice].systemVersion.floatValue <= 8.0){
         //use UIAlertView
         UIAlertView *alerView=[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelTitle otherButtonTitles:okTitle, nil];
-        
+        alerView.delegate=self;
         [alerView show];
     }
     else{
@@ -310,7 +423,7 @@ static unsigned long long basicRandomInt=0;
     
     if([UIDevice currentDevice].systemVersion.floatValue<8.0){
         
-        NSString *s=[NSString stringWithFormat:@"%@:%@",PrefsScheme,PrivacyPS];
+        NSString *s=[NSString stringWithFormat:@"%@:root=%@",@"prefs",AppBundleId];
         url=[NSURL URLWithString:s];
     }
     else{
@@ -318,7 +431,7 @@ static unsigned long long basicRandomInt=0;
         url=[NSURL URLWithString:UIApplicationOpenSettingsURLString];
     }
     
-    [ToolManager jumpToAppSystemSettingViewWithURL:url];
+    [DeviceAuthManager jumpToAppSystemSettingViewWithURL:url];
 }
 
 +(void)jumpToAppSystemSettingViewForSavePhotoToAlbum{
@@ -326,17 +439,22 @@ static unsigned long long basicRandomInt=0;
     NSURL *url;
     
     if([UIDevice currentDevice].systemVersion.floatValue<8.0){
-    
-        NSString *s=[NSString stringWithFormat:@"%@:%@",PrefsScheme,PhotoPS];
-
+        
+        NSString *s=[NSString stringWithFormat:@"%@:root=%@",@"prefs",AppBundleId];//PrefsScheme,PhotoPS
+        
         url=[NSURL URLWithString:s];
     }
     else{
-
+        
         url=[NSURL URLWithString:UIApplicationOpenSettingsURLString];
     }
+    
+    [DeviceAuthManager jumpToAppSystemSettingViewWithURL:url];
+}
 
-    [ToolManager jumpToAppSystemSettingViewWithURL:url];
++(void)jumpToSettingPhotoAlbumAuth{
+    
+    [DeviceAuthManager jumpToAppSystemSettingViewForSavePhotoToAlbum];
 }
 
 +(void)jumpToAppSystemSettingViewWithURL:(NSURL * _Nonnull)url{
@@ -734,6 +852,116 @@ static unsigned long long basicRandomInt=0;
     return image;
 }
 
+#pragma mark - convert FileSize to TB-GB-MB-KB
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(AliasFileSize)fileSize{
+    
+    NSString *xB=@"";
+    
+    if(fileSize<MB && fileSize>0){
+        //convert To KB
+        AliasFileSize kbb=fileSize/KB;
+        xB=[NSString stringWithFormat:@"%lluKB",kbb];
+    }
+    else if(fileSize>MB && fileSize<GB){
+        //convert To MB
+        AliasFileSize kbb=fileSize/MB;
+        xB=[NSString stringWithFormat:@"%lluMB",kbb];
+    }
+    else if(fileSize>GB && fileSize<TB){
+        //convert To GB
+        AliasFileSize kbb=fileSize/GB;
+        xB=[NSString stringWithFormat:@"%lluGB",kbb];
+    }
+    else if(fileSize>TB){
+        //convert To TB
+        AliasFileSize kbb=fileSize/TB;
+        xB=[NSString stringWithFormat:@"%lluTB",kbb];
+    }
+    
+    return xB;
+}
+
+#pragma mark - compressImage to maxLength bytes
++(UIImage *)compressImage:(UIImage *)image toByte:(unsigned long long)maxLength{
+    // Compress by quality
+    CGFloat compression = 1;
+    NSData *data = UIImageJPEGRepresentation(image, compression);
+    if (data.length < maxLength){
+        return image;
+    }
+    
+    //try to keep image quality when it be compressed.
+    CGFloat max = 1;
+    CGFloat min = 0;
+    for (int i = 0; i < 6; ++i) {
+        
+        compression = (max + min) / 2;
+        data = UIImageJPEGRepresentation(image, compression);
+        
+        if (data.length < maxLength * 0.9) {
+            min = compression;
+        }
+        else if (data.length > maxLength) {
+            max = compression;
+        }
+        else {
+            break;
+        }
+    }
+    
+    UIImage *resultImage = [UIImage imageWithData:data];
+    if (data.length < maxLength){
+        return resultImage;
+    }
+    
+    // Compress image to special size
+    NSUInteger lastDataLength = 0;
+    while (data.length > maxLength && data.length != lastDataLength) {
+        
+        lastDataLength = data.length;
+        CGFloat ratio = (CGFloat)maxLength / data.length;
+        CGSize size = CGSizeMake((NSUInteger)(resultImage.size.width * sqrtf(ratio)), (NSUInteger)(resultImage.size.height * sqrtf(ratio)));
+        
+        // Use NSUInteger to prevent white blank
+        UIGraphicsBeginImageContext(size);
+        
+        [resultImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+        resultImage = UIGraphicsGetImageFromCurrentImageContext();
+        
+        UIGraphicsEndImageContext();
+        
+        data = UIImageJPEGRepresentation(resultImage, compression);
+    }
+    
+    return resultImage;
+}
+
++(UIImage *)compressImage:(UIImage *)image toSize:(CGSize)size{
+    
+    UIImage *midImage=[image copy];
+    
+    UIGraphicsBeginImageContext(size);
+    
+    [midImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
++(NSData *)convertImageToData:(nonnull UIImage *)image{
+    
+    NSData *data;
+    if(image &&
+       [image isKindOfClass:[UIImage class]]){
+        
+        data=UIImageJPEGRepresentation(image, 1.0);
+    }
+    
+    return data;
+}
+
 #pragma mark -
 +(nullable UIImage *)addImageToImageCenter:(nonnull NSString *)imageNameA
                              withImageName:(nonnull NSString *)imageNameB{
@@ -772,6 +1000,114 @@ static unsigned long long basicRandomInt=0;
     UIGraphicsEndImageContext();
     
     return [UIImage imageWithCGImage:resultImage.CGImage scale:scale orientation:UIImageOrientationUp];
+}
+
+#pragma mark - about MD5
++(NSString *)generateStringMD5:(nonnull NSString *)string{
+    
+    if([NSString isEmptyString:string]){
+        return @"";
+    }
+    
+    const char *cStr=string.UTF8String;
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    
+    CC_MD5(cStr, (CC_LONG)strlen(cStr), digest);//generate string md5
+    
+    NSMutableString *md5Str=[[NSMutableString alloc] initWithCapacity:CC_MD5_DIGEST_LENGTH];
+    
+    for(int i=0;i<CC_MD5_DIGEST_LENGTH;i++){
+        
+        [md5Str appendFormat:@"%02x",digest[i]];
+    }
+    
+    return md5Str;
+}
+
+#pragma mark - convert date
++(nonnull NSString *)convertDateToYMDString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
+}
+
++(nonnull NSString *)convertDateToYMDHMSString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
+}
+
++(nonnull NSString *)convertDateToFullString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];//yyyy-MM-dd HH:mm:ss zzz
+    
+    NSString *dateString=[format stringFromDate:date];
+    
+    return dateString;
+}
+
+#pragma mark - NetworkReachability
+-(void)listenNetworkReachability{
+    
+    [self addNetworkReachabilityObserver];
+    [self startMonitorNetwork];
+}
+
+-(void)stopMonitorNetwork{
+    
+    AFNetworkReachabilityManager *m=[AFNetworkReachabilityManager sharedManager];
+    
+    [m stopMonitoring];
+}
+
+#pragma mark -
+-(void)startMonitorNetwork{
+    
+    AFNetworkReachabilityManager *m=[AFNetworkReachabilityManager sharedManager];
+    
+    [m startMonitoring];
+}
+
+-(void)addNetworkReachabilityObserver{
+    
+    NSNotificationCenter *c=[NSNotificationCenter defaultCenter];
+    
+    [c addObserver:self selector:@selector(networkStatusChangedNoti:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
+}
+
+#pragma mark -
+-(void)networkStatusChangedNoti:(NSNotification *)noti{
+    /*
+     * AFNetworkReachabilityStatusUnknown          = -1,
+     * AFNetworkReachabilityStatusNotReachable     = 0,
+     * AFNetworkReachabilityStatusReachableViaWWAN = 1,
+     * AFNetworkReachabilityStatusReachableViaWiFi = 2,
+     */
+    AFNetworkReachabilityStatus status=[[noti.userInfo objectForKey:AFNetworkingReachabilityNotificationStatusItem] integerValue];
+    _currStatus  = status;
+    if(status != AFNetworkReachabilityStatusReachableViaWiFi){
+        //wifi unusable,stop listen udp Datagram
+        NSLog(@"wifi unusable");
+        
+        //should close tcp socket
+        [self closeSocket];
+        
+    }else{
+        //wifi usable,
+        NSLog(@"wifi usable");
+    }
 }
 
 #pragma mark - Property

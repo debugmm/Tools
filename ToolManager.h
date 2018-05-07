@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 //define
 #define InputTextFieldContentKey (@"content")
@@ -93,5 +94,37 @@ typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
 +(BOOL)canUseCamera;
 
 +(BOOL)canUseMicrophone;
+
+#pragma mark - about MD5
++(nullable NSString *)generateStringMD5:(nonnull NSString *)string;
+
+#pragma mark - convert date
+
+/**
+ convert Date to String
+ 
+ @param date date
+ @return date string
+ @discussion The dateString format: yyyy-MM-dd
+ */
++(nonnull NSString *)convertDateToYMDString:(nonnull NSDate *)date;
+
+/**
+ convert Date to String
+ 
+ @param date date
+ @return date string
+ @discussion The dateString format: yyyy-MM-dd HH:mm:ss
+ */
++(nonnull NSString *)convertDateToYMDHMSString:(nonnull NSDate *)date;
+
+/**
+ convert Date to String
+ 
+ @param date date
+ @return date string
+ @discussion The dateString format: yyyy-MM-dd HH:mm:ss zzz
+ */
++(nonnull NSString *)convertDateToFullString:(nonnull NSDate *)date;
 
 @end

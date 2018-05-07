@@ -7,6 +7,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol AbstractCellDelegate<NSObject>
+
+@optional
+
+@end
+
 @interface AbstractCell : UITableViewCell
+
+@property (assign,nonatomic) id<AbstractCellDelegate> delegate;
 
 @end

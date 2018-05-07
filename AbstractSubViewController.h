@@ -7,11 +7,25 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol AbstractSubViewControllerDelegate<NSObject>
+
+@optional
+
+@end;
+
 @interface AbstractSubViewController : UIViewController
 
 @property(nonatomic,strong)UITableView * _Nullable tableView;
 
+@property(nonatomic,assign)id<AbstractSubViewControllerDelegate> delegate;
+
 #pragma mark -
 -(id _Nullable )generateCellFromNibFile:(nonnull NSString *)nibNamed;
+
+-(void)initConfig;
+
+-(void)removeNavigationBackItemDefaultTitle;
+
+-(void)hiddenDefaultBackButton;
 
 @end
