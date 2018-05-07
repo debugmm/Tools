@@ -389,28 +389,28 @@ static DeviceAuthManager *shareManager=nil;
         return image;
     }
     
-    CGFloat max = 1;
-    CGFloat min = 0;
-    for (int i = 0; i < 6; ++i) {
+//     CGFloat max = 1;
+//     CGFloat min = 0;
+//     for (int i = 0; i < 6; ++i) {
         
-        compression = (max + min) / 2;
-        data = UIImageJPEGRepresentation(image, compression);
+//         compression = (max + min) / 2;
+//         data = UIImageJPEGRepresentation(image, compression);
         
-        if (data.length < maxLength * 0.9) {
-            min = compression;
-        }
-        else if (data.length > maxLength) {
-            max = compression;
-        }
-        else {
-            break;
-        }
-    }
+//         if (data.length < maxLength * 0.9) {
+//             min = compression;
+//         }
+//         else if (data.length > maxLength) {
+//             max = compression;
+//         }
+//         else {
+//             break;
+//         }
+//     }
     
-    UIImage *resultImage = [UIImage imageWithData:data];
-    if (data.length < maxLength){
-        return resultImage;
-    }
+//     UIImage *resultImage = [UIImage imageWithData:data];
+//     if (data.length < maxLength){
+//         return resultImage;
+//     }
     
     // Compress by size
     NSUInteger lastDataLength = 0;
