@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@class UIView;
-@class UIViewController;
+#import "MTAppConst.h"
+#import <CoreGraphics/CoreGraphics.h>
+#import <UIKit/UIKit.h>
 
 typedef void (^AlertCancelBlock)( NSDictionary * _Nullable param);
 typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
@@ -16,7 +16,7 @@ typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
 #pragma mark -
 @interface DeviceAuthManager : NSObject
 
-+(instancetype _Nullable )shareManager;
++(instancetype)shareManager;
 
 #pragma mark - Jump to sys-app Setting
 +(void)jumpToAppSystemSettingViewForVideoRecord;
@@ -39,5 +39,8 @@ typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
 +(BOOL)canUseCamera;
 
 +(BOOL)canUseMicrophone;
+
+#pragma mark - action sheet
++(nonnull UIAlertController*)alertCameraPhotoAlbumActionSheetWithCurrentViewController:(nonnull UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate> *)currentViewController;
 
 @end
