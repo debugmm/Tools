@@ -938,11 +938,10 @@ static unsigned long long basicRandomInt=0;
 
 +(UIImage *)compressImage:(UIImage *)image toSize:(CGSize)size{
     
-    UIImage *midImage=[image copy];
+    CGFloat scale=[UIScreen mainScreen].scale;
+    UIGraphicsBeginImageContextWithOptions(size, NO, scale);
     
-    UIGraphicsBeginImageContext(size);
-    
-    [midImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
     image = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
