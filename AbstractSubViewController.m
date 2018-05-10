@@ -38,6 +38,10 @@
 #pragma mark -
 -(void)initConfigNavigation{
     
+    //clear the back image and shadow image which effect is setting to default(nil)
+    [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:0];
+    [self.navigationController.navigationBar setShadowImage:nil];
+    
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     
     self.navigationController.navigationBar.barTintColor=[UIColor blackColor];
