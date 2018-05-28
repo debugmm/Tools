@@ -1057,6 +1057,60 @@ static unsigned long long basicRandomInt=0;
     return dateString;
 }
 
++(nullable NSDate *)convertDateStringToDate:(nonnull NSString *)dateString
+                                 dateFormat:(nonnull NSString *)dateFormatString{
+    
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
+    df.dateFormat=dateFormatString;
+    
+    NSDate *date=[df dateFromString:dateString];
+    
+    return date;
+}
+
++(nullable NSDate *)convertYMDDateStringToDate:(nonnull NSString *)dateString{
+    
+    NSString *dateFormat=@"yyyy-mm-dd";
+    
+    NSDate *date=[ConvertDataTool convertDateStringToDate:dateString dateFormat:dateFormat];
+    
+    return date;
+}
+
+#pragma mark -
++(nonnull NSString *)getNowTimeIntervalStringSince1970{
+    //get time interval
+    NSTimeInterval ti=[NSDate date].timeIntervalSince1970;
+    unsigned long long t=(unsigned long long)ti;
+    NSString *timeStr=[NSString stringWithFormat:@"%llx",t];
+    
+    return timeStr;
+}
+
++(nonnull NSString *)getNowTimeIntervalDecimalStringSince1970{
+    //get time interval
+    NSTimeInterval ti=[NSDate date].timeIntervalSince1970;
+    unsigned long long t=(unsigned long long)ti;
+    NSString *timeStr=[NSString stringWithFormat:@"%lld",t];
+    
+    return timeStr;
+}
+
++(NSTimeInterval)getNowTimeIntervalSince1970{
+    
+    NSTimeInterval ti=[NSDate date].timeIntervalSince1970;
+    
+    return ti;
+}
+
++(nullable NSString *)convertTimeIntervalToDecimalString:(NSTimeInterval)timeinterval{
+    
+    unsigned long long t=(unsigned long long)timeinterval;
+    NSString *timeStr=[NSString stringWithFormat:@"%lld",t];
+    
+    return timeStr;
+}
+
 #pragma mark - NetworkReachability
 -(void)listenNetworkReachability{
     
