@@ -1024,9 +1024,18 @@ static unsigned long long basicRandomInt=0;
 }
 
 #pragma mark - convert date
-+(nonnull NSString *)convertDateToYMDString:(nonnull NSDate *)date{
++(nonnull NSDateFormatter *)generateLocalDateFormatter{
     
     NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    format.locale=[NSLocale currentLocale];
+    format.timeZone=[NSTimeZone localTimeZone];
+    
+    return format;
+}
+
++(nonnull NSString *)convertDateToYMDString:(nonnull NSDate *)date{
+    
+    NSDateFormatter *format=[ToolManager generateLocalDateFormatter];
     
     [format setDateFormat:@"yyyy-MM-dd"];//yyyy-MM-dd HH:mm:ss zzz
     
@@ -1037,7 +1046,7 @@ static unsigned long long basicRandomInt=0;
 
 +(nonnull NSString *)convertDateToYMDHMSString:(nonnull NSDate *)date{
     
-    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    NSDateFormatter *format=[ToolManager generateLocalDateFormatter];
     
     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];//yyyy-MM-dd HH:mm:ss zzz
     
@@ -1048,7 +1057,7 @@ static unsigned long long basicRandomInt=0;
 
 +(nonnull NSString *)convertDateToFullString:(nonnull NSDate *)date{
     
-    NSDateFormatter *format=[[NSDateFormatter alloc] init];
+    NSDateFormatter *format=[ToolManager generateLocalDateFormatter];
     
     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];//yyyy-MM-dd HH:mm:ss zzz
     
@@ -1060,7 +1069,7 @@ static unsigned long long basicRandomInt=0;
 +(nullable NSDate *)convertDateStringToDate:(nonnull NSString *)dateString
                                  dateFormat:(nonnull NSString *)dateFormatString{
     
-    NSDateFormatter *df=[[NSDateFormatter alloc] init];
+    NSDateFormatter *df=[ToolManager generateLocalDateFormatter];
     df.dateFormat=dateFormatString;
     
     NSDate *date=[df dateFromString:dateString];
@@ -1070,7 +1079,7 @@ static unsigned long long basicRandomInt=0;
 
 +(nullable NSDate *)convertYMDDateStringToDate:(nonnull NSString *)dateString{
     
-    NSString *dateFormat=@"yyyy-mm-dd";
+    NSString *dateFormat=@"yyyy-MM-dd";
     
     NSDate *date=[ConvertDataTool convertDateStringToDate:dateString dateFormat:dateFormat];
     
