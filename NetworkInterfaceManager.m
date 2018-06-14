@@ -67,4 +67,24 @@ static NetworkInterfaceManager *_sharedManager=nil;
     return address;
 }
 
+#pragma mark - 
+-(void)getWifiInfo{
+    /*
+     *{
+     *   BSSID = "f4:83:cd:b8:f2:8b";
+     *   SSID = MoTou;
+     *   SSIDDATA = <4d6f546f 75>;
+     *}
+     */
+    NSArray *infos = CFBridgingRelease(CNCopySupportedInterfaces());
+    
+    if(infos && infos.count>0){
+        
+        CFStringRef interface=(__bridge CFStringRef)([infos firstObject]);
+        NSDictionary *info=CFBridgingRelease(CNCopyCurrentNetworkInfo(interface));
+        
+        NSLog(@"net interface info:%@",info);
+    }
+}
+
 @end
