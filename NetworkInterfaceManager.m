@@ -65,7 +65,7 @@ static NetworkInterfaceManager *_sharedManager=nil;
     }
 }
 
--(NSArray *)getAddressDictionarys{
+-(nullable NSArray *)getAddressDictionarys{
     
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
@@ -84,30 +84,38 @@ static NetworkInterfaceManager *_sharedManager=nil;
     while(temp_addr != NULL) {
         
         NSMutableDictionary *ipaddressDict=[NSMutableDictionary dictionaryWithCapacity:1];
-        
-        //set interface name
-        NSString *iname=[NSString stringWithUTF8String:temp_addr->ifa_name];
-        iname=[NSString stringByTrimmingBothEndWhiteSpace:iname];
-        [ipaddressDict setObject:iname forKey:InterfaceNameKey];
-        
-        //set address
+        //get address
         NSString *address = @"";
         if(temp_addr->ifa_addr->sa_family == AF_INET){
             //ipv4 ipaddress
             address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-            
-            [ipaddressDict setObject:IP_ADDR_IPv4 forKey:AddrTypeKey];
+            address=[NSString stringByTrimmingBothEndWhiteSpace:address];
+            if(![NSString isEmptyString:address]){
+                [ipaddressDict setObject:IP_ADDR_IPv4 forKey:AddrTypeKey];
+            }
         }
         else if(temp_addr->ifa_addr->sa_family==AF_INET6){
             //ipv6 ipaddress
             address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-            
-            [ipaddressDict setObject:IP_ADDR_IPv6 forKey:AddrTypeKey];
+            address=[NSString stringByTrimmingBothEndWhiteSpace:address];
+            if(![NSString isEmptyString:address]){
+                [ipaddressDict setObject:IP_ADDR_IPv6 forKey:AddrTypeKey];
+            }
         }
         
-        [ipaddressDict setObject:address forKey:AddressKey];
+        if(![NSString isEmptyString:address]){
+            
+            //set address
+            [ipaddressDict setObject:address forKey:AddressKey];
+            
+            //set interface name
+            NSString *iname=[NSString stringWithUTF8String:temp_addr->ifa_name];
+            iname=[NSString stringByTrimmingBothEndWhiteSpace:iname];
+            
+            [ipaddressDict setObject:iname forKey:InterfaceNameKey];
+        }
         
-        //set ipaddress dicts
+        //add ipaddress dicts to array
         if(ipaddressDict.count>0){
             [ipaddressDicts addObject:ipaddressDict];
         }
