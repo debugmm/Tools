@@ -1,15 +1,30 @@
 //
 //  NetworkInterfaceManager.m
-//  IPAddressDemo
 //
-//  Created by worktree on 06/03/2018.
-//  Copyright © 2018 worktree. All rights reserved.
+//  Created by worktree on 02/03/2018.
+//  Copyright © 2018 wjg. All rights reserved.
 //
 
 #import "NetworkInterfaceManager.h"
 
+//SystemConfiguration
+#import <SystemConfiguration/CaptiveNetwork.h>
 #import <ifaddrs.h>
 #import <arpa/inet.h>
+#import <net/if.h>
+#import "NSString+CateString.h"
+
+//define
+#define IOS_CELLULAR        (@"pdp_ip0")
+#define IOS_WIFI_Prefix     (@"en")
+#define IOS_VPN             (@"utun0")
+#define IP_ADDR_IPv4        (@"ipv4")
+#define IP_ADDR_IPv6        (@"ipv6")
+
+#define AddrTypeKey (@"addrType")
+#define AddressKey (@"addr")
+#define PortKey (@"port")
+#define InterfaceNameKey (@"interfaceName")
 
 //define
 static NetworkInterfaceManager *_sharedManager=nil;
@@ -31,44 +46,7 @@ static NetworkInterfaceManager *_sharedManager=nil;
 }
 
 #pragma mark -
--(NSString *)getEn0InterfaceIpV4IpAddress{
-    
-    NSString *address = @"";
-    struct ifaddrs *interfaces = NULL;
-    struct ifaddrs *temp_addr = NULL;
-    int success = 0;
-    
-    // retrieve the current interfaces - returns 0 on success
-    success = getifaddrs(&interfaces);
-    
-    if (success == 0) {
-        // Loop through linked list of interfaces
-        temp_addr = interfaces;
-        
-        while(temp_addr != NULL) {
-            
-            if(temp_addr->ifa_addr->sa_family == AF_INET) {
-                
-                // Check if interface is en0 which is the wifi connection on the iPhone
-                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
-                    
-                    // Get NSString from C String
-                    address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-                    
-                }
-            }
-            
-            temp_addr = temp_addr->ifa_next;
-        }
-    }
-    
-    // Free memory
-    freeifaddrs(interfaces);
-    return address;
-}
-
-#pragma mark - 
--(void)getWifiInfo{
+-(void)fetchWifiInfo{
     /*
      *{
      *   BSSID = "f4:83:cd:b8:f2:8b";
@@ -87,8 +65,68 @@ static NetworkInterfaceManager *_sharedManager=nil;
     }
 }
 
+-(NSArray *)getAddressDictionarys{
+    
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *temp_addr = NULL;
+    int success = -1;
+    NSMutableArray *ipaddressDicts=[NSMutableArray arrayWithCapacity:1];
+    
+    // retrieve the current interfaces - returns 0 on success
+    success = getifaddrs(&interfaces);
+    if(success!=0){
+        return ipaddressDicts;
+    }
+    
+    temp_addr = interfaces;
+    
+    // Loop through linked list of interfaces
+    while(temp_addr != NULL) {
+        
+        NSMutableDictionary *ipaddressDict=[NSMutableDictionary dictionaryWithCapacity:1];
+        
+        //set interface name
+        NSString *iname=[NSString stringWithUTF8String:temp_addr->ifa_name];
+        iname=[NSString stringByTrimmingBothEndWhiteSpace:iname];
+        [ipaddressDict setObject:iname forKey:InterfaceNameKey];
+        
+        //set address
+        NSString *address = @"";
+        if(temp_addr->ifa_addr->sa_family == AF_INET){
+            //ipv4 ipaddress
+            address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
+            
+            [ipaddressDict setObject:IP_ADDR_IPv4 forKey:AddrTypeKey];
+        }
+        else if(temp_addr->ifa_addr->sa_family==AF_INET6){
+            //ipv6 ipaddress
+            address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
+            
+            [ipaddressDict setObject:IP_ADDR_IPv6 forKey:AddrTypeKey];
+        }
+        
+        [ipaddressDict setObject:address forKey:AddressKey];
+        
+        //set ipaddress dicts
+        if(ipaddressDict.count>0){
+            [ipaddressDicts addObject:ipaddressDict];
+        }
+        
+        //next ifa
+        temp_addr = temp_addr->ifa_next;
+    }
+    
+    // Free memory
+    freeifaddrs(interfaces);
+    
+    return ipaddressDicts;
+}
+
+#pragma mark -
 -(void)checkNetworkflow{
+    
     struct ifaddrs *ifa_list = 0, *ifa;
+    
     if (getifaddrs(&ifa_list) == -1)
     {
         return;
