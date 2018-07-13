@@ -17,7 +17,8 @@ struct TreeNode{
 	int fileType,//video,normal,word...
 	string filePath,
 	
-	array supportOperations,//support operations.maybe using enum which it's elments supportting logic bit operation is more good.
+	array supportOperations,//support operations.
+	Operations supportOperation,//maybe using enum which it's elements supportting logic bit operation is more good.
 	
 	bool hasFetchedSubTrees,//whether the treenode has successful fetched subtrees.
 	
