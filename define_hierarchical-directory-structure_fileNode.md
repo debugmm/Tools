@@ -6,6 +6,7 @@
 	文件、文件夹组织方式为：树形结构。因此，应该采用treeNode方式，来构造文件-文件夹组织方式。
 
 typedef struct TreeNode *PtrToNode;
+
 typedef PtrToNode Tree;
 
 struct TreeNode{
@@ -16,7 +17,7 @@ struct TreeNode{
 	int fileType,//video,normal,word...
 	string filePath,
 	
-	array supportOperations,//support operations
+	array supportOperations,//support operations.maybe using enum which it's elments supportting logic bit operation is more good.
 	
 	bool hasFetchedSubTrees,//whether the treenode has successful fetched subtrees.
 	
