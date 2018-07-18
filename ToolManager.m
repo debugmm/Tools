@@ -1131,6 +1131,35 @@ static unsigned long long basicRandomInt=0;
     return timeStr;
 }
 
+#pragma mark - convert FileSize to TB-GB-MB-KB
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(MTFileSize)fileSize{
+    
+    NSString *xB=@"";
+    
+    if(fileSize<MB && fileSize>0){
+        //convert To KB
+        MTFileSize kbb=fileSize/KB;
+        xB=[NSString stringWithFormat:@"%lluKB",kbb];
+    }
+    else if(fileSize>MB && fileSize<GB){
+        //convert To MB
+        MTFileSize kbb=fileSize/MB;
+        xB=[NSString stringWithFormat:@"%lluMB",kbb];
+    }
+    else if(fileSize>GB && fileSize<TB){
+        //convert To GB
+        MTFileSize kbb=fileSize/GB;
+        xB=[NSString stringWithFormat:@"%lluGB",kbb];
+    }
+    else if(fileSize>TB){
+        //convert To TB
+        MTFileSize kbb=fileSize/TB;
+        xB=[NSString stringWithFormat:@"%lluTB",kbb];
+    }
+    
+    return xB;
+}
+
 #pragma mark - NetworkReachability
 -(void)listenNetworkReachability{
     
