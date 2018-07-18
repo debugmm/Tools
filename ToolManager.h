@@ -135,4 +135,7 @@ typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
  */
 +(nonnull NSDate *)localTodayDate;
 
+#pragma mark - convert FileSize to TB-GB-MB-KB
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(AliasFileSize)fileSize;
+
 @end
