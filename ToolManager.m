@@ -1087,6 +1087,17 @@ static unsigned long long basicRandomInt=0;
 }
 
 #pragma mark -
++(nonnull NSDate *)localTodayDate{
+    
+    NSDate *today=[NSDate date];
+    NSTimeZone *zone=[NSTimeZone systemTimeZone];
+    NSInteger interval=[zone secondsFromGMTForDate:today];
+    NSDate *localToday=[today dateByAddingTimeInterval:interval];
+    
+    return localToday;
+}
+
+#pragma mark -
 +(nonnull NSString *)getNowTimeIntervalStringSince1970{
     //get time interval
     NSTimeInterval ti=[NSDate date].timeIntervalSince1970;
