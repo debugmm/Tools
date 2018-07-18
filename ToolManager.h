@@ -127,4 +127,12 @@ typedef void (^AlertOkBlock)( NSDictionary * _Nullable param);
  */
 +(nonnull NSString *)convertDateToFullString:(nonnull NSDate *)date;
 
+#pragma mark -
+/**
+ get local today date.
+ @discussion [NSDate date],is utc 0 date time,not the local system zone date time.
+             so,use the nstimezone systemTimeZone to get local date time.
+ */
++(nonnull NSDate *)localTodayDate;
+
 @end
