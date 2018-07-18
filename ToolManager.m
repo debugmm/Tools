@@ -1132,7 +1132,7 @@ static unsigned long long basicRandomInt=0;
 }
 
 #pragma mark - convert FileSize to TB-GB-MB-KB
-+(nullable NSString *)convertLongFileSizeValueToTGMBString:(MTFileSize)fileSize{
++(nullable NSString *)convertLongFileSizeValueToTGMBString:(AliasFileSize)fileSize{
     
     NSString *xB=@"";
     
