@@ -11,7 +11,9 @@
 
 @protocol CustomJSExport <JSExport>
 
-@optional
+//@optional
+//jsexport protocol methods are must be implement.
+//it is means that can not use optional.
 
 @end
 
