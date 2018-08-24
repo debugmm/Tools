@@ -106,6 +106,41 @@
     return result;
 }
 
+#pragma mark -
+-(nullable NSString *)stringByRemovingNewLines{
+    
+    if([NSString isEmptyString:self]){
+        return @"";//return empty string:@""
+    }
+    
+    NSMutableString *newString=[NSMutableString stringWithCapacity:1];
+    
+    NSScanner *scanner=[[NSScanner alloc] initWithString:self];
+    
+    //    NSMutableCharacterSet *skipped=[NSMutableCharacterSet newlineCharacterSet];
+    //    [skipped invert];
+    [scanner setCharactersToBeSkipped:nil];
+    
+    NSCharacterSet *newLineCharacterSet=[NSCharacterSet newlineCharacterSet];
+    
+    while (![scanner isAtEnd]) {
+        
+        NSString *temp=nil;
+        [scanner scanUpToCharactersFromSet:newLineCharacterSet intoString:&temp];
+        if(![NSString isEmptyString:temp]){
+            [newString appendString:temp];
+        }
+        else{
+            
+            if((scanner.scanLocation+1)<self.length){
+                [scanner setScanLocation:scanner.scanLocation+1];
+            }
+        }
+    }
+    
+    return newString;
+}
+
 #pragma mark - about MD5
 +(NSString *)generateStringMD5:(nonnull NSString *)string{
     

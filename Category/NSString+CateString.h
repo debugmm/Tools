@@ -50,6 +50,14 @@ typedef enum NSComparisonResultAlias : NSInteger {
  */
 -(NSComparisonResultAlias)versionStringCompare:(NSString *)versionStringB;
 
+#pragma mark -
+/**
+ @description
+ 
+ @return newString from string which removed all newLines characters.
+ */
+-(nullable NSString *)stringByRemovingNewLines;
+
 #pragma mark - about MD5
 +(NSString *)generateStringMD5:(nonnull NSString *)string;
 
