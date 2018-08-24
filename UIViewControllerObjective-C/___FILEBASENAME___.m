@@ -48,6 +48,10 @@
     //in this mehod,usually we do views config on basis of data or some status after initConfig views
 }
 
+#pragma mark -
+// all sub config method at here.
+//example: config+ViewClassName{}
+
 #pragma mark - init config datas
 -(void)initConfigDatas{
     
