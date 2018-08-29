@@ -187,6 +187,19 @@
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
     
     NSLog(@"text:%@",text);
+    
+    BOOL containEmoji=[text isContainedEmoji];
+    if(containEmoji){
+        
+        //show prompt
+        text=[text removeAllEmoji];
+        [self showTextInputEmojiPrompt];
+        
+        NSLog(@"remove all emoji:%@",text);
+        
+        return NO;
+    }
+    
     NSString *midText=[NSString isEmptyString:text] ? @"" : text;
     NSRange mrange=[midText rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]];
     if(mrange.location!=NSNotFound){
@@ -194,6 +207,38 @@
     }
     
     return YES;
+}
+
+#pragma mark -
+-(void)showTextInputEmojiPrompt{
+    
+    JGTextInputPromptController *svc=[[JGTextInputPromptController alloc] init];
+    
+    svc.view.backgroundColor=[UIColor whiteColor];
+    svc.modalPresentationStyle=UIModalPresentationPopover;
+    
+    svc.preferredContentSize=CGSizeMake(120, 35);
+    svc.popoverPresentationController.delegate=self;
+    
+    CGPoint cursorP=[self.textView getCursorPositionInView];
+    if(cursorP.x<40){
+        cursorP.x=40;
+    }
+    else if(self.textView.bounds.size.width-cursorP.x<40){
+        cursorP.x-=40;
+    }
+    
+    if(cursorP.y<8){
+        cursorP.y-=7;
+    }
+    
+    CGRect pointR=CGRectMake(cursorP.x, cursorP.y, 0.5, 0.5);
+    svc.popoverPresentationController.sourceRect=pointR;
+    svc.popoverPresentationController.sourceView=self.textView;
+    svc.popoverPresentationController.permittedArrowDirections=UIPopoverArrowDirectionAny;
+    svc.popoverPresentationController.backgroundColor=[UIColor whiteColor];
+    
+    [self presentViewController:svc animated:YES completion:nil];
 }
 
 #pragma mark - Keyboard Noti

@@ -1,6 +1,5 @@
 //
 //  JGTextView.m
-//  MoTou
 //
 //  Created by worktree on 24/08/2018.
 //  Copyright © 2018 wjg. All rights reserved.
@@ -56,6 +55,25 @@
 #pragma mark -
 // all sub config method at here.
 //example: config+ViewClassName{}
+
+#pragma mark - cursor position
+-(CGPoint)getCursorPositionInView{
+    
+    CGPoint cursorPosition=[self caretRectForPosition:self.selectedTextRange.start].origin;
+    
+    CGPoint point=[self convertPoint:cursorPosition toView:self];
+    
+    return point;
+}
+
+-(CGPoint)getCursorPositionInWindow{
+    
+    CGPoint cursorPosition=[self caretRectForPosition:self.selectedTextRange.end].origin;
+    
+    CGPoint point=[self convertPoint:cursorPosition toView:self.window];
+    
+    return point;
+}
 
 #pragma mark - property
 

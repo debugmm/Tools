@@ -9,4 +9,9 @@
 
 @interface JGTextView : UITextView
 
+#pragma mark - cursor position
+-(CGPoint)getCursorPositionInView;
+
+-(CGPoint)getCursorPositionInWindow;
+
 @end
