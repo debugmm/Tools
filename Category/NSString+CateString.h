@@ -61,4 +61,19 @@ typedef enum NSComparisonResultAlias : NSInteger {
 #pragma mark - about MD5
 +(NSString *)generateStringMD5:(nonnull NSString *)string;
 
+#pragma mark - emoji
+/**
+ @description
+ 
+ @return whether string contained emoji.
+ */
+-(BOOL)isContainedEmoji;
+
+/**
+ @description
+ 
+ @return return new string without emojis that's means all emoji being removed.
+ */
+-(nullable NSString *)removeAllEmoji;
+
 @end

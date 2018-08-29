@@ -8,6 +8,14 @@
 #import "NSString+CateString.h"
 #import <CommonCrypto/CommonDigest.h>
 
+//define
+#define EmojiPattern1 (@"[\\u2600-\\u27BF\\U0001F300-\\U0001F77F\\U0001F900-\\U0001F9FF]")
+#define EmojiPattern2 (@"[\\uFE0F]")
+#define EmojiPattern3 (@"[\\U0001F3FB-\\U0001F3FF]")
+#define EmojiPattern4 (@"[\\U0001F1E6-\\U0001F1FF]")
+
+#define EmojiPattern ([NSString stringWithFormat:@"%@|%@|%@|%@",EmojiPattern4,EmojiPattern3,EmojiPattern2,EmojiPattern1])
+
 @implementation NSString (CateString)
 
 #pragma mark - Base
@@ -161,6 +169,32 @@
     }
     
     return md5Str;
+}
+
+#pragma mark - emoji
+-(BOOL)isContainedEmoji{
+    
+    if([NSString isEmptyString:self]){
+        return NO;
+    }
+    
+    NSPredicate *pred=[NSPredicate predicateWithFormat:@"SELF MATCHES %@",EmojiPattern];
+    BOOL isMatch=[pred evaluateWithObject:self];
+    
+    return isMatch;
+}
+
+-(nullable NSString *)removeAllEmoji{
+    
+    if([NSString isEmptyString:self]){
+        return self;
+    }
+    
+    NSRegularExpression *re=[NSRegularExpression regularExpressionWithPattern:EmojiPattern options:NSRegularExpressionCaseInsensitive error:nil];
+    
+    NSString *removedString=[re stringByReplacingMatchesInString:self options:0 range:NSMakeRange(0, self.length) withTemplate:@""];
+    
+    return removedString;
 }
 
 @end
