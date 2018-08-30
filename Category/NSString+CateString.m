@@ -8,14 +8,6 @@
 #import "NSString+CateString.h"
 #import <CommonCrypto/CommonDigest.h>
 
-//define
-#define EmojiPattern1 (@"[\\u2600-\\u27BF\\U0001F300-\\U0001F77F\\U0001F900-\\U0001F9FF]")
-#define EmojiPattern2 (@"[\\uFE0F]")
-#define EmojiPattern3 (@"[\\U0001F3FB-\\U0001F3FF]")
-#define EmojiPattern4 (@"[\\U0001F1E6-\\U0001F1FF]")
-
-#define EmojiPattern ([NSString stringWithFormat:@"%@|%@|%@|%@",EmojiPattern4,EmojiPattern3,EmojiPattern2,EmojiPattern1])
-
 @implementation NSString (CateString)
 
 #pragma mark - Base
@@ -178,10 +170,34 @@
         return NO;
     }
     
-    NSPredicate *pred=[NSPredicate predicateWithFormat:@"SELF MATCHES %@",EmojiPattern];
-    BOOL isMatch=[pred evaluateWithObject:self];
+    __block BOOL returnValue = NO;
     
-    return isMatch;
+    [self enumerateSubstringsInRange:NSMakeRange(0, self.length)
+                             options:NSStringEnumerationByComposedCharacterSequences
+                          usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop){
+                              
+                              const unichar high = [substring characterAtIndex: 0];
+                              
+                              // Surrogate pair (U+1D000-1F9FF)
+                              if (0xD800 <= high && high <= 0xDBFF){
+                                  
+                                  const unichar low = [substring characterAtIndex: 1];
+                                  const int codepoint = ((high - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+                                  
+                                  if (0x1D000 <= codepoint && codepoint <= 0x1F9FF){
+                                      returnValue = YES;
+                                  }
+                              }
+                              else{// Not surrogate pair (U+2100-27BF)
+                                  
+                                  if (0x2100 <= high && high <= 0x27BF){
+                                      
+                                      returnValue = YES;
+                                  }
+                              }
+                          }];
+    
+    return returnValue;
 }
 
 -(nullable NSString *)removeAllEmoji{
@@ -190,11 +206,16 @@
         return self;
     }
     
-    NSRegularExpression *re=[NSRegularExpression regularExpressionWithPattern:EmojiPattern options:NSRegularExpressionCaseInsensitive error:nil];
+    NSMutableString *newString=[[NSMutableString alloc] initWithCapacity:1];
     
-    NSString *removedString=[re stringByReplacingMatchesInString:self options:0 range:NSMakeRange(0, self.length) withTemplate:@""];
+    [self enumerateSubstringsInRange:NSMakeRange(0, self.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString * _Nullable substring, NSRange substringRange, NSRange enclosingRange, BOOL * _Nonnull stop) {
+        
+        if(![substring isContainedEmoji]){
+            [newString appendString:substring];
+        }
+    }];
     
-    return removedString;
+    return newString;
 }
 
 @end
