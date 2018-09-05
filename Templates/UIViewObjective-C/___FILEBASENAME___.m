@@ -2,8 +2,13 @@
 
 #import "___FILEBASENAME___.h"
 
+@interface ___FILEBASENAMEASIDENTIFIER___ ()
+
+@end
+
 @implementation ___FILEBASENAMEASIDENTIFIER___
 
+#pragma mark - view init
 
 #pragma mark - init configs
 -(void)initConfigs{
