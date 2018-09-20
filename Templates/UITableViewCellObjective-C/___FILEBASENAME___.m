@@ -38,6 +38,16 @@
 // all subviews init config method at here.
 //example: initConfig+ViewClassName{}
 
+#pragma mark - init config datas
+-(void)initConfigDatas{
+    
+    //in this method,usually we do request data from internet.
+}
+
+#pragma mark -
+// all subviews init config method at here.
+//example: initConfig+ViewClassName+Data{}
+
 #pragma mark - configs
 -(void)configs{
     
@@ -47,14 +57,6 @@
 #pragma mark -
 // all sub config method at here.
 //example: config+ViewClassName{}
-
-#pragma mark - init config datas
--(void)initConfigDatas{
-    
-    //in this method,usually we do request data from internet.
-}
-
-#pragma mark -
 
 #pragma mark - property
 
