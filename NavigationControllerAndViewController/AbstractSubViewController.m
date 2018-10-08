@@ -7,6 +7,8 @@
 
 #import "AbstractSubViewController.h"
 
+#import <>
+
 //define
 #define PlaceHoldH (2.0)
 
@@ -69,6 +71,34 @@
     self.navigationItem.leftBarButtonItem=nil;
     self.navigationItem.leftBarButtonItems=nil;
     [self.navigationItem setHidesBackButton:YES];
+}
+
+-(void)exampleMasonryToBottomConstraints{
+    
+    __weak typeof(self) weakSelf=self;
+    self.tableView.delegate=self;
+    self.tableView.dataSource=self;
+    
+    [self.view addSubview:self.tableView];
+    
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        
+        make.left.equalTo(weakSelf.view.mas_left).offset(0);
+        make.right.equalTo(weakSelf.view.mas_right).offset(0);
+        
+        if (@available(iOS 11.0, *)) {
+            make.top.equalTo(weakSelf.view.mas_safeAreaLayoutGuideTop).offset(0);
+        } else {
+            // Fallback on earlier versions
+            make.top.equalTo(weakSelf.mas_topLayoutGuideBottom).offset(0);
+        }
+        
+        if (@available(iOS 11.0, *)) {
+            make.bottom.equalTo(weakSelf.view.mas_safeAreaLayoutGuideBottom).offset(0);
+        } else {
+            make.bottom.equalTo(weakSelf.mas_bottomLayoutGuideTop).offset(0);
+        }
+    }];
 }
 
 #pragma mark - Public
