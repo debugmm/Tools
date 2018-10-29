@@ -27,6 +27,8 @@
     //usually we do views auto layout init configs in initConfigViews
     
     [self initConfigViews];
+    
+//    [self initConfigDatas];
 }
 
 #pragma mark - init config views

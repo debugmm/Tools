@@ -15,8 +15,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self initConfigs];
-    
-    [self configs];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -31,6 +29,8 @@
     //usually we do views auto layout init configs in initConfigViews
     
     [self initConfigViews];
+    
+//    [self initConfigDatas];
 }
 
 #pragma mark - init config views
