@@ -7,6 +7,8 @@
 
 #import "AppDelegate.h"
 
+#import <UserNotifications/UserNotifications.h>
+
 @interface AppDelegate()
 
 @property(strong, nonatomic)UIWindow *window;
@@ -23,6 +25,7 @@
     
     //init config app delegate
     [self initConfig];
+    [self registerRemoteNotification];
     
     return YES;
 }
@@ -54,6 +57,68 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 
+}
+
+#pragma mark - Remote Notification
+-(void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings{
+    
+    NSLog(@"didRegisterUserNotificationSettings");
+}
+
+-(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+    //save device token to server
+    NSString *deviceTokenSt = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<" withString:@""] stringByReplacingOccurrencesOfString:@">" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    NSLog(@"deviceTokenSt:%@",deviceTokenSt);
+    
+    //the deviceToken is seldom renewed.
+    //so we can check deviceToken that whether need saving it to server or not.
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    //failed register remote notification
+    NSLog(@"didFailToRegisterForRemoteNotificationsWithError%@",error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler{
+    //received a remote notification
+    
+    
+    //demo
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+
+#pragma mark -
+-(void)registerRemoteNotification{
+    //=========
+    //config preferred options of notification.
+    //register remote notification.(Just for getting APNS's deviceToken)
+    //receive apns's deviceToken.
+    
+    //save the deviceToken to your server.
+    //receive remote-notification.
+    //=========
+    
+    //Registers preferred options for notifying the user.
+    if(@available(iOS 10.0,*)){
+        //iOS 10
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        UNAuthorizationOptions op=UNAuthorizationOptionBadge;
+        
+        [center requestAuthorizationWithOptions:op completionHandler:^(BOOL granted, NSError * _Nullable error) {
+            
+            NSLog(@"requestAuthorizationWithOptions%@",error);
+        }];
+    }
+    else if(@available(iOS 8.0,*)){
+        //iOS 8.0-10
+        UIUserNotificationSettings *un=[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge categories:nil];
+        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:un];
+    }
+    
+    //Register Remote Notifications. APNS sends a deviceToken to App.
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
 #pragma mark - init Config
