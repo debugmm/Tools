@@ -12,7 +12,7 @@
 //define
 #define WebViewDidCreatedJSContextNoti (@"com.example.didCreateContextNotification")
 
-@implementation NSObject (MTObjectCategory)
+@implementation NSObject (ObjectCategory)
 
 //- (void)webView:(WebView *)webView didCreateJavaScriptContext:(JSContext *)context forFrame:(WebFrame *)frame{
 //    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidCreatedJSContextNoti object:context];
