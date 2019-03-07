@@ -40,6 +40,11 @@ static FMDBManager *sharedManager=nil;
 #define DictionaryKey (@"key")//key:value<dictionary>
 #define UidKey (@"uid")//key:value<string>,the value is user id
 
+#define TBPrefix (@"create table if not exists")
+
+#define AppendingPrimaryKey(fieldType) ([NSString stringWithFormat:@"%@ primary key",fieldType])
+#define FieldSQL(fieldName,fieldType) ([NSString stringWithFormat:@"%@ %@",fieldName,fieldType])
+
 #pragma mark -
 @interface FMDBManager(){
     
