@@ -11,44 +11,23 @@
 #pragma mark - view init
 
 #pragma mark - init configs
--(void)initConfigs{
-    
+-(void)configInit{
     //init config views
     //usually we do views auto layout init configs in initConfigViews
-    
-    [self initConfigViews];
-    
-//    [self initConfigDatas];
+    [self viewsInit];
+    [self dataInit];
 }
 
-#pragma mark - init config views
--(void)initConfigViews{
+#pragma mark - views init
+-(void)viewsInit{
     // invoke all views init config method
 }
 
-#pragma mark -
-// all subviews init config method at here.
-//example: initConfig+ViewClassName{}
-
-#pragma mark - init config datas
--(void)initConfigDatas{
+#pragma mark - datas init
+-(void)dataInit{
     
     //in this method,usually we do request data from internet.
 }
-
-#pragma mark -
-// all subviews init config method at here.
-//example: initConfig+ViewClassName+Data{}
-
-#pragma mark - configs
--(void)configs{
-    
-    //in this mehod,usually we do views config on basis of data or some status after initConfig views
-}
-
-#pragma mark -
-// all sub config method at here.
-//example: config+ViewClassName{}
 
 #pragma mark - property
 
